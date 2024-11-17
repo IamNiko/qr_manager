@@ -3,7 +3,7 @@ import os
 class Config:
     # Configuración básica
     SECRET_KEY = 'tu_clave_secreta_aqui'
-    BASE_DIR = r"C:/Users/nicol/QR_PROJ/gestor_productos_web"
+    BASE_DIR = r"C:/Users/nicol/Projects/qr_manager/gestor_productos_web"
     
     # Configuración de la base de datos
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'productos_por_clubes.db')
