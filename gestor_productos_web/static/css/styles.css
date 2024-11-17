@@ -1,0 +1,306 @@
+/* styles.css */
+:root {
+    --kap-gold: #FFD700;          /* Color dorado */
+    --kap-gold-hover: #DAA520;    /* Dorado más oscuro para hover */
+    --dark-bg: #000000;           /* Negro puro para el fondo */
+    --dark-secondary: #1a1a1a;    /* Negro más claro para elementos */
+    --dark-light: #2d2d2d;        /* Gris muy oscuro */
+    --border-color: #333333;
+}
+
+/* Fondo negro */
+body {
+    background-color: var(--dark-bg) !important;
+    color: #fff !important;
+}
+
+/* Mejoras para las tablas */
+.table-responsive {
+    overflow-x: auto !important;
+    margin-bottom: 1rem;
+    /* Estilo para la barra de scroll */
+    scrollbar-width: thin;
+    scrollbar-color: var(--kap-gold) var(--dark-secondary);
+}
+
+/* Estilos para la barra de scroll en Chrome */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--dark-secondary);
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: var(--kap-gold);
+    border-radius: 4px;
+}
+
+/* Tabla */
+.table {
+    color: #fff !important;
+    background-color: var(--dark-secondary) !important;
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: var(--dark-bg) !important;
+    color: var(--kap-gold) !important;
+    border-color: var(--border-color) !important;
+    white-space: nowrap;
+    padding: 12px !important;
+}
+
+.table td {
+    border-color: var(--border-color) !important;
+    padding: 12px !important;
+    vertical-align: middle !important;
+    color: #fff !important;
+}
+
+/* Asegurar que todo el texto en las tablas sea blanco */
+.table td *, 
+.table td span,
+.table td p,
+.table td div,
+.table small,
+.table .text-muted,
+.table .text-secondary {
+    color: #fff !important;
+}
+
+/* Filas alternadas */
+.table tbody tr:nth-of-type(odd) {
+    background-color: var(--dark-secondary) !important;
+}
+
+.table tbody tr:nth-of-type(even) {
+    background-color: var(--dark-light) !important;
+}
+
+/* Hover en las filas */
+.table tbody tr:hover {
+    background-color: rgba(255, 215, 0, 0.1) !important;
+}
+
+/* Para tablas dentro de cards */
+.card .table {
+    margin-bottom: 0;
+}
+
+/* Asegurarse que las badges y botones en tablas sean visibles */
+.table .badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+}
+
+.table .btn-group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.table .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+/* Para mantener consistente el resto de estilos... */
+.navbar {
+    background-color: var(--dark-bg) !important;
+}
+
+.navbar-brand {
+    color: var(--kap-gold) !important;
+}
+
+.nav-link {
+    color: #fff !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--kap-gold) !important;
+}
+
+.nav-link i {
+    color: var(--kap-gold) !important;
+}
+
+.card {
+    background-color: var(--dark-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.card-header {
+    background-color: var(--dark-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* Botones */
+.btn-primary {
+    background-color: var(--kap-gold) !important;
+    border-color: var(--kap-gold) !important;
+    color: #000 !important;
+    font-weight: 500 !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--kap-gold-hover) !important;
+    border-color: var(--kap-gold-hover) !important;
+}
+
+.btn-outline-primary {
+    color: var(--kap-gold) !important;
+    border-color: var(--kap-gold) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--kap-gold) !important;
+    color: #000 !important;
+}
+
+/* Modales */
+.modal-content {
+    background-color: var(--dark-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.modal-header {
+    background-color: var(--dark-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.modal-footer {
+    background-color: var(--dark-bg) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+/* Forms */
+.form-control,
+.form-select,
+input[type="text"],
+input[type="number"],
+input[type="search"],
+select,
+textarea {
+    background-color: var(--dark-light) !important;
+    border-color: var(--border-color) !important;
+    color: #fff !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+    background-color: var(--dark-light) !important;
+    border-color: var(--kap-gold) !important;
+    color: #fff !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25) !important;
+}
+
+/* Estilo para las opciones del desplegable */
+select.form-select option {
+    background-color: var(--dark-light) !important;
+    color: #fff !important;
+}
+
+/* Cambiar el color del ícono del select */
+select.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+
+.input-group-text {
+    background-color: var(--dark-light) !important;
+    border-color: var(--border-color) !important;
+    color: #fff !important;
+}
+
+/* Links */
+a {
+    color: var(--kap-gold);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--kap-gold-hover);
+}
+
+/* Texto destacado */
+.text-primary {
+    color: var(--kap-gold) !important;
+}
+
+/* Progress bars */
+.progress {
+    background-color: var(--dark-light) !important;
+}
+
+.progress-bar {
+    background-color: var(--kap-gold) !important;
+}
+
+/* Close buttons */
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Placeholder text - actualizado para ser más visible */
+.form-control::placeholder,
+.form-select::placeholder,
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+
+/* Para diferentes navegadores */
+::-webkit-input-placeholder { /* Chrome/Safari/Opera */
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+:-ms-input-placeholder { /* IE/Edge */
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+::-moz-placeholder { /* Firefox */
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+:-moz-placeholder { /* Firefox */
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+
+/* Para el texto seleccionado dentro del input */
+.form-control::selection,
+.form-select::selection,
+input::selection {
+    background-color: var(--kap-gold) !important;
+    color: #000 !important;
+}
+
+/* Logo styles */
+.logo-display {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin-left: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .logo-display {
+        height: 60px;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}

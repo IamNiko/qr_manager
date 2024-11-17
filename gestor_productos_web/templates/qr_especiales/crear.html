@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}Crear QR Especial{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Crear QR Especial</h3>
+            </div>
+            <div class="card-body">
+                <form id="qrForm">
+                    <div class="mb-3">
+                        <label for="codigo_producto" class="form-label">Producto</label>
+                        <select class="form-select" id="codigo_producto" name="codigo_producto" required>
+                            <option value="">Seleccione un producto...</option>
+                            {% for producto in productos %}
+                            <option value="{{ producto.codigo_producto }}" 
+                                    data-pvp="{{ producto.pvp }}">
+                                {{ producto.nombre }} - {{ producto.marca }} 
+                                (Pvp: ${{ "%.2f"|format(producto.pvp) }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Credito Disponible" class="form-label">Credito Disponible</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="Credito Disponible" name="credito_disponible" 
+                                   min="1" max="99" required>
+                            <div id="pvp" class="form-text mt-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_caducidad" class="form-label">Fecha de Caducidad</label>
+                        <input type="date" class="form-control" id="fecha_caducidad" 
+                               name="fecha_caducidad" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="usos_maximos" class="form-label">Número de Usos</label>
+                        <input type="number" class="form-control" id="usos_maximos" 
+                               name="usos_maximos" min="1" max="999" required>
+                        <div class="form-text">Número máximo de veces que se podrá usar este QR</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('listar_qr_especiales') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Generar QR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Vista Previa</h3>
+            </div>
+            <div class="card-body text-center">
+                <div id="previewSection" class="d-none">
+                    <img id="qrPreview" src="" alt="QR Code" class="img-fluid mb-3">
+                    <div class="qr-info small">
+                        <p class="mb-1"><strong>Código:</strong> <span id="codigoPreview"></span></p>
+                        <p class="mb-1"><strong>Producto:</strong> <span id="productoPreview"></span></p>
+                        <p class="mb-1"><strong>credito_disponible:</strong> <span id="credito_disponiblePreview"></span></p>
+                        <p class="mb-1"><strong>Caducidad:</strong> <span id="caducidadPreview"></span></p>
+                        <p class="mb-1"><strong>Usos:</strong> <span id="usosPreview"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Éxito -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">QR Generado Exitosamente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrFinal" src="" alt="QR Code" class="img-fluid mb-3">
+                <p>El código QR ha sido generado con éxito.</p>
+                <p id="qrCodigo" class="small"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="descargarQRFinal()">
+                    <i class="fas fa-download me-2"></i>Descargar QR
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('qrForm');
+    const productoSelect = document.getElementById('codigo_producto');
+    const credito_disponibleInput = document.getElementById('credito_disponible');
+    const fechaCaducidad = document.getElementById('fecha_caducidad');
+    
+    // Configurar fecha mínima
+    fechaCaducidad.min = new Date().toISOString().split('T')[0];
+    
+    // Mostrar precio original al seleccionar producto
+    productoSelect.addEventListener('change', function() {
+        const option = this.options[this.selectedIndex];
+        const pvp = option.dataset.pvp;
+        if (pvp) {
+            document.getElementById('pvp').textContent = 
+                `pvp: $${parseFloat(pvp).toFixed(2)}`;
+        }
+    });
+    
+    // Manejar envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        try {
+            const response = await fetch('/api/qr_especial/crear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('qrFinal').src = data.qr.imagen;
+                document.getElementById('qrCodigo').textContent = data.qr.codigo;
+                new bootstrap.Modal(document.getElementById('successModal')).show();
+            } else {
+                alert('Error al generar QR: ' + data.mensaje);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        }
+    });
+});
+
+function descargarQRFinal() {
+    const img = document.getElementById('qrFinal');
+    const codigo = document.getElementById('qrCodigo').textContent;
+    const link = document.createElement('a');
+    link.download = `qr-${codigo}.png`;
+    link.href = img.src;
+    link.click();
+}
+</script>
+{% endblock %}

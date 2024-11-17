@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Gestión de QR - {{ producto.nombre }}</h2>
+    
+    <div class="product-info mb-3">
+        <p><strong>Código:</strong> {{ producto.codigo_producto }}</p>
+        <p><strong>Marca:</strong> {{ producto.marca }}</p>
+        <p><strong>Precio:</strong> ${{ producto.pvp }}</p>
+        <p><strong>Club:</strong> {{ producto.nombre_club }}</p>
+    </div>
+
+    <div class="qr-actions mb-3">
+        <button class="btn btn-primary" onclick="qrManager.crearQR('{{ producto.codigo_producto }}')">
+            Generar Nuevo QR
+        </button>
+    </div>
+
+    <div id="qr-list" class="qr-list">
+        <!-- Los QRs se cargarán aquí dinámicamente -->
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const qrManager = new QRManager();
+        qrManager.actualizarListaQRs('{{ producto.codigo_producto }}');
+    });
+</script>
+{% endblock %}

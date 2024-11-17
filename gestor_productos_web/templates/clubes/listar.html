@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Clubes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Clubes</h2>
+    <a href="{{ url_for('crear_club') }}" class="btn btn-primary">Crear Nuevo Club</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Productos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubes %}
+            <tr>
+                <td>{{ club.id_club }}</td>
+                <td>{{ club.codigo_club }}</td>
+                <td>{{ club.nombre }}</td>
+                <td>{{ club.num_productos }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('editar_club', id=club.id_club) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <button onclick="confirmarEliminar({{ club.id_club }}, '{{ club.nombre }}')" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea eliminar el club <span id="nombreClub"></span>?</p>
+                <p class="text-danger">Esta acción eliminará también todos los productos asociados.</p>
+            </div>
+            <div class="modal-footer">
+                <form id="formEliminar" method="POST">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function confirmarEliminar(id, nombre) {
+    document.getElementById('nombreClub').textContent = nombre;
+    document.getElementById('formEliminar').action = `/clubes/eliminar/${id}`;
+    new bootstrap.Modal(document.getElementById('confirmarEliminarModal')).show();
+}
+</script>
+{% endblock %}
+{% endblock %}

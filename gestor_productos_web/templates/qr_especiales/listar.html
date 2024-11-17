@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block title %}QR Especiales{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-qrcode me-2"></i>QR Especiales</h2>
+    <a href="{{ url_for('crear_qr_especial') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Crear Nuevo QR
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Cred_Disp</th>
+                <th>Vencimiento</th>
+                <th colspan="2" class="text-center" width="150">Estado</th>
+                <th>Usos</th>
+                <th width="150">Acciones</th>
+            </tr>
+        </thead>
+        </thead>
+        <tbody>
+            {% for qr in qrs %}
+            <tr>
+                <td>{{ qr.codigo }}</td>
+                <td>{{ qr.producto.nombre }} ({{ qr.producto.marca }})</td>
+                <td>${{ "%.2f"|format(qr.credito_disponible) }}</td>
+                <td>
+                    {{ qr.fecha_caducidad.strftime('%d/%m/%Y') }}
+
+                </td>
+                <td>
+                    {% if qr.esta_caducado() %}
+                    <span class="badge bg-danger ms-1">Caducado</span>
+                {% endif %}
+                </td>
+
+                <td>
+                    <span class="badge {% if qr.es_valido() %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ "Activo" if qr.es_valido() else "Inactivo" }}
+                    </span>
+                </td>
+                <td>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar {% if qr.esta_agotado() %}bg-danger{% else %}bg-success{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ (qr.usos_actuales / qr.usos_maximos * 100)|round }}%">
+                            {{ qr.usos_actuales }}/{{ qr.usos_maximos }}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <!-- Botón Ver/Descargar QR -->
+                        <button class="btn btn-sm btn-outline-primary" 
+                                onclick="mostrarQR('{{ qr.codigo }}', '{{ qr.get_imagen_base64() }}')"
+                                title="Ver QR">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        
+                        <!-- Botón Descargar -->
+                        <button class="btn btn-sm btn-outline-success" 
+                                onclick="descargarQR('{{ qr.codigo }}', '{{ qr.get_imagen_base64() }}')"
+                                title="Descargar QR">
+                            <i class="fas fa-download"></i>
+                        </button>
+
+                        <!-- Botón Detalles/Editar -->
+                        <a href="{{ url_for('editar_qr_especial', id=qr.id) }}" 
+                           class="btn btn-sm btn-outline-info"
+                           title="Ver detalles">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        {% if qr.es_valido() %}
+                        <!-- Botón Desactivar -->
+                        <button class="btn btn-sm btn-outline-danger" 
+                                onclick="desactivarQR('{{ qr.codigo }}')"
+                                title="Desactivar QR">
+                            <i class="fas fa-ban"></i>
+                        </button>
+
+                        {% else %}
+                        <!-- Botón Activar -->
+                        <button class="btn btn-sm btn-outline-success" 
+                                onclick="activarQR('{{ qr.codigo }}')"
+                                title="Activar QR">
+                            <i class="fas fa-check"></i>
+
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para mostrar QR -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-qrcode me-2"></i>Código QR
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrModalImage" src="" alt="QR Code" class="img-fluid mb-3">
+                <p class="small" id="qrModalCode"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="descargarQRModal()">
+                    <i class="fas fa-download me-2"></i>Descargar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentQRCode = '';
+
+function mostrarQR(codigo, imagenBase64) {
+    currentQRCode = codigo;
+    document.getElementById('qrModalImage').src = "data:image/png;base64," + imagenBase64;
+    document.getElementById('qrModalCode').textContent = codigo;
+    new bootstrap.Modal(document.getElementById('qrModal')).show();
+}
+
+function descargarQR(codigo, imagenBase64) {
+    const link = document.createElement('a');
+    link.download = `qr-especial-${codigo}.png`;
+    link.href = "data:image/png;base64," + imagenBase64;
+    link.click();
+}
+
+function descargarQRModal() {
+    const img = document.getElementById('qrModalImage');
+    const link = document.createElement('a');
+    link.download = `qr-especial-${currentQRCode}.png`;
+    link.href = img.src;
+    link.click();
+}
+
+function activarQR(codigo) {
+    if (confirm('¿Está seguro de que desea activar este QR?')) {
+        fetch('/api/qr_especial/activar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ codigo: codigo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error al activar el QR: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    }
+}
+
+
+function desactivarQR(codigo) {
+    if (confirm('¿Está seguro de que desea desactivar este QR?')) {
+        fetch('/api/qr_especial/desactivar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ codigo: codigo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error al desactivar el QR: ' + data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    }
+}
+</script>
+{% endblock %}

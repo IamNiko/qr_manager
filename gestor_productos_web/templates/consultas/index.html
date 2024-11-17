@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Consultas{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Consultas de Productos</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Consulta por Club -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Productos por Club</h5>
+                        <form id="formClub">
+                            <div class="mb-3">
+                                <select class="form-select" id="id_club" required>
+                                    <option value="">Seleccione un club...</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consulta por Marca -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Productos por Marca</h5>
+                        <form id="formMarca">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="marca" placeholder="Ingrese marca..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consulta por Rango de Precios -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Por Rango de Precios</h5>
+                        <form id="formPrecio">
+                            <div class="mb-3">
+                                <input type="number" class="form-control" id="min_precio" placeholder="Precio mínimo" required step="0.01">
+                            </div>
+                            <div class="mb-3">
+                                <input type="number" class="form-control" id="max_precio" placeholder="Precio máximo" required step="0.01">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resultados -->
+<div class="card">
+    <div class="card-header">
+        <h4>Resultados</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="tablaResultados">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Club</th>
+                        <th>Marca</th>
+                        <th>Nombre</th>
+                        <th>PVP</th>
+                        <th>Costo</th>
+                        <th>Margen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Cargar clubes al iniciar
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const response = await fetch('/api/clubes');
+        const clubes = await response.json();
+        const select = document.getElementById('id_club');
+        clubes.forEach(club => {
+            const option = document.createElement('option');
+            option.value = club.id_club;
+            option.textContent = club.nombre;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error al cargar clubes:', error);
+    }
+});
+
+// Función para mostrar resultados en la tabla
+function mostrarResultados(productos) {
+    const tbody = document.querySelector('#tablaResultados tbody');
+    tbody.innerHTML = '';
+    
+    productos.forEach(producto => {
+        const margen = ((producto.pvp - producto.costo) / producto.costo * 100).toFixed(2);
+        const row = `
+            <tr>
+                <td>${producto.codigo_producto}</td>
+                <td>${producto.nombre_club}</td>
+                <td>${producto.marca}</td>
+                <td>${producto.nombre}</td>
+                <td>$${producto.pvp.toFixed(2)}</td>
+                <td>$${producto.costo.toFixed(2)}</td>
+                <td>${margen}%</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// Manejar búsqueda por club
+document.getElementById('formClub').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+        const id_club = document.getElementById('id_club').value;
+        const response = await fetch('/api/consultar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `tipo=productos_club&id_club=${id_club}`
+        });
+        const productos = await response.json();
+        mostrarResultados(productos);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+// Manejar búsqueda por marca
+document.getElementById('formMarca').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+        const marca = document.getElementById('marca').value;
+        const response = await fetch('/api/consultar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `tipo=productos_marca&marca=${marca}`
+        });
+        const productos = await response.json();
+        mostrarResultados(productos);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+// Manejar búsqueda por rango de precios
+document.getElementById('formPrecio').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+        const min_precio = document.getElementById('min_precio').value;
+        const max_precio = document.getElementById('max_precio').value;
+        const response = await fetch('/api/consultar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `tipo=rango_precio&min_precio=${min_precio}&max_precio=${max_precio}`
+        });
+        const productos = await response.json();
+        mostrarResultados(productos);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+</script>
+{% endblock %}

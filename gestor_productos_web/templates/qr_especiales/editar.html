@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Editar QR Especial{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Editar QR Especial</h2>
+   
+    <form method="post">
+        <div class="mb-3">
+            <label for="credito_disponible" class="form-label">Crédito Disponible</label>
+            <input type="number" class="form-control" id="credito_disponible" name="credito_disponible" value="{{ qr.credito_disponible }}" required>
+        </div>
+       
+        <div class="mb-3">
+            <label for="fecha_caducidad" class="form-label">Fecha de Caducidad</label>
+            <input type="date" class="form-control" id="fecha_caducidad" name="fecha_caducidad" value="{{ qr.fecha_caducidad }}" required>
+        </div>
+       
+        <div class="mb-3">
+            <label for="usos_maximos" class="form-label">Usos Máximos</label>
+            <input type="number" class="form-control" id="usos_maximos" name="usos_maximos" value="{{ qr.usos_maximos }}" required>
+        </div>
+       
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a href="{{ url_for('listar_qr_especiales') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

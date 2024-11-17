@@ -1,0 +1,119 @@
+/* Estilos específicos para QR */
+.qr-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.qr-code {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.qr-code img {
+    max-width: 200px;
+    height: auto;
+}
+
+.qr-details {
+    margin-top: 10px;
+}
+
+.qr-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.qr-status.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.qr-status.inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.qr-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.qr-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.qr-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.qr-card-body {
+    text-align: center;
+}
+
+.qr-card-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.qr-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Modal para QR */
+.qr-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.qr-modal-content {
+    position: relative;
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.qr-modal-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.qr-fade-in {
+    animation: fadeIn 0.3s ease-in;
+}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Productos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Productos</h2>
+    <a href="{{ url_for('crear_producto') }}" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i>Crear Nuevo Producto
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Código</th>
+                <th>Club</th>
+                <th>Marca</th>
+                <th>Nombre</th>
+                <th>PVP</th>
+                <th>Costo</th>
+                <th>Margen</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.codigo_producto }}</td>
+                <td>{{ producto.id_club|nombre_club }}</td>
+                <td>{{ producto.marca }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>${{ "%.2f"|format(producto.pvp) }}</td>
+                <td>${{ "%.2f"|format(producto.costo) }}</td>
+                <td>
+                    <span class="badge {% if ((producto.pvp - producto.costo) / producto.costo * 100) > 30 %}bg-success{% elif ((producto.pvp - producto.costo) / producto.costo * 100) > 15 %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ "%.1f"|format((producto.pvp - producto.costo) / producto.costo * 100) }}%
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('editar_producto', id=producto.id_producto) }}" 
+                           class="btn btn-sm btn-outline-primary"
+                           title="Editar producto">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button onclick="confirmarEliminar({{ producto.id_producto }}, '{{ producto.nombre }}')" 
+                                class="btn btn-sm btn-outline-danger"
+                                title="Eliminar producto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea eliminar el producto <strong><span id="nombreProducto"></span></strong>?</p>
+                <p class="text-danger">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Esta acción también eliminará todos los códigos QR asociados al producto.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <form id="formEliminar" method="POST">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmarEliminar(id, nombre) {
+    document.getElementById('nombreProducto').textContent = nombre;
+    document.getElementById('formEliminar').action = `/productos/eliminar/${id}`;
+    new bootstrap.Modal(document.getElementById('confirmarEliminarModal')).show();
+}
+</script>
+{% endblock %}
