@@ -17,6 +17,10 @@ QR Manager es un sistema integrado basado en Arduino que permite la gestión y v
 
 ## 🛠️ Tecnologías Utilizadas
 - Arduino (Hardware principal)
+- Python
+- SQLlite
+- Flask
+- HTML - CSS - JS
 - Módulo lector QR
 - Servidor de validación
 - Base de datos para gestión de códigos y créditos
@@ -68,16 +72,13 @@ Si deseas contribuir al proyecto:
 [Indica aquí el estado actual del proyecto: En Desarrollo/Beta/Producción]
 
 ## 📄 Licencia
-[Especificar la licencia bajo la cual se distribuye el proyecto]
+
 
 ## 👥 Autores
-- [Tu nombre o nickname]
-- [Otros colaboradores]
+- Nicolas Gentile Rosello
 
 ## 📞 Contacto
-- [Tu información de contacto]
-- [Enlaces a redes profesionales]
+- nicolasgentilepro@gmail.com
 
 ## 🙏 Agradecimientos
-- [Mencionar colaboradores o recursos utilizados]
-- [Referencias a librerías o proyectos que inspiraron este desarrollo]
+- Arduino 
