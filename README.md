@@ -63,16 +63,16 @@ QR Manager es un sistema integrado basado en Arduino que permite la gestión y v
 ## 🤝 Contribuir
 Si deseas contribuir al proyecto:
 1. Haz un Fork del repositorio
-2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
+2. Crea una rama para tu característica 
+3. Commit tus cambios 
+4. Push a la rama 
 5. Abre un Pull Request
 
 ## ⚠️ Estado del Proyecto
-[Indica aquí el estado actual del proyecto: En Desarrollo/Beta/Producción]
+Desarrollo primera version.
 
 ## 📄 Licencia
-
+Sin licencia.
 
 ## 👥 Autores
 - Nicolas Gentile Rosello
@@ -81,4 +81,4 @@ Si deseas contribuir al proyecto:
 - nicolasgentilepro@gmail.com
 
 ## 🙏 Agradecimientos
-- Arduino 
+- Arduino PKAP Sports 
