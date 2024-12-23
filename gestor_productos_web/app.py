@@ -10,6 +10,12 @@ import os
 from extensions import db
 from models import Producto
 from flask_cors import CORS  # Nuevo: Para permitir conexiones externas
+from servicios.gpt import obtener_respuesta_gpt4
+from nucleo.estados import gestor_estados
+from flask import request, jsonify
+from main import manejar_interaccion
+from base_datos.sesion import SessionLocal  # Importar la sesión configurada
+import logging
 
 # Inicialización de Flask
 app = Flask(__name__)
@@ -582,40 +588,29 @@ def chat():
     """Página del chat de soporte"""
     return render_template('chat.html')
 
-@app.route('/api/chat', methods=['POST'])
-def api_chat():
-    """Maneja las interacciones del chat"""
-    try:
-        data = request.get_json()
-        mensaje_usuario = data.get('mensaje', '')
 
-        # Aquí puedes integrar tu lógica para responder al usuario
-        respuesta_bot = f"Recibí tu mensaje: {mensaje_usuario}. ¿En qué más puedo ayudarte?"
-
-        return jsonify({"respuesta": respuesta_bot})
-    except Exception as e:
-        return jsonify({"respuesta": f"Error: {str(e)}"}), 500
-
-#endpoint para manejar las solicitudes
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     """Maneja las interacciones del chat con OpenAI"""
     try:
-        from gpt import obtener_respuesta_gpt4
-        from estados import gestor_estados
-        from flask import request, jsonify
-
         data = request.get_json()
         mensaje_usuario = data.get('mensaje', '')
         remitente = "web_user"  # Identificador único para usuarios web
-        
-        # Obtener el estado del usuario
-        estado_usuario = gestor_estados.obtener_estado(remitente)
-        respuesta_bot = obtener_respuesta_gpt4(mensaje_usuario, estado_usuario, db=None)
-        
-        # Actualizar estado
-        gestor_estados.actualizar_estado(remitente, estado_usuario)
-        return jsonify({"respuesta": respuesta_bot})
+
+        logging.debug(f"Mensaje recibido: {mensaje_usuario}")
+
+        # Crear una nueva sesión de base de datos
+        db = SessionLocal()
+        try:
+            # Llama a la función manejar_interaccion con la sesión
+            respuesta = manejar_interaccion(remitente, mensaje_usuario, db=db)
+            logging.debug(f"Respuesta generada: {respuesta}")
+            return jsonify(respuesta)
+        finally:
+            db.close()
     except Exception as e:
+        logging.error(f"Error en el endpoint /api/chat: {str(e)}")
         return jsonify({"respuesta": f"Error: {str(e)}"}), 500
+

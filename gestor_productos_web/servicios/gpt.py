@@ -1,10 +1,10 @@
 import time
 from openai import OpenAI
-from app.configuracion import configuracion
+from configuracion import configuracion
 from typing import Dict, Any
 from sqlalchemy.orm import Session
-from app.base_datos.modelos import Conversacion
-from app.servicios.prompts import gestor_prompts
+from base_datos.modelos import Conversacion
+from servicios.prompts import gestor_prompts
 
 cliente = OpenAI(api_key=configuracion.OPENAI_API_KEY)
 

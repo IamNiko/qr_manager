@@ -5,3 +5,4 @@ if __name__ == '__main__':
         # Crear todas las tablas si no existen
         db.create_all()
     app.run(debug=True)
+    
