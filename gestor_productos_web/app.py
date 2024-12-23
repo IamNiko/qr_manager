@@ -574,3 +574,48 @@ if __name__ == '__main__':
     for rule in app.url_map.iter_rules():
         print(f"{rule.endpoint}: {rule.rule}")
     app.run(host='0.0.0.0', port=3000, debug=True)
+
+#endpoint chat
+
+@app.route('/chat')
+def chat():
+    """Página del chat de soporte"""
+    return render_template('chat.html')
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    """Maneja las interacciones del chat"""
+    try:
+        data = request.get_json()
+        mensaje_usuario = data.get('mensaje', '')
+
+        # Aquí puedes integrar tu lógica para responder al usuario
+        respuesta_bot = f"Recibí tu mensaje: {mensaje_usuario}. ¿En qué más puedo ayudarte?"
+
+        return jsonify({"respuesta": respuesta_bot})
+    except Exception as e:
+        return jsonify({"respuesta": f"Error: {str(e)}"}), 500
+
+#endpoint para manejar las solicitudes
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    """Maneja las interacciones del chat con OpenAI"""
+    try:
+        from gpt import obtener_respuesta_gpt4
+        from estados import gestor_estados
+        from flask import request, jsonify
+
+        data = request.get_json()
+        mensaje_usuario = data.get('mensaje', '')
+        remitente = "web_user"  # Identificador único para usuarios web
+        
+        # Obtener el estado del usuario
+        estado_usuario = gestor_estados.obtener_estado(remitente)
+        respuesta_bot = obtener_respuesta_gpt4(mensaje_usuario, estado_usuario, db=None)
+        
+        # Actualizar estado
+        gestor_estados.actualizar_estado(remitente, estado_usuario)
+        return jsonify({"respuesta": respuesta_bot})
+    except Exception as e:
+        return jsonify({"respuesta": f"Error: {str(e)}"}), 500

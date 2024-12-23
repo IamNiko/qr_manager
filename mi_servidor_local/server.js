@@ -9,7 +9,7 @@ const app = express();
 const port = 3000;
 
 // Conectar a la base de datos SQLite
-const dbPath = "C:/Users/nicol/QR_PROJ - CASHDUINO/gestor_productos_web/instance/productos_por_clubes.db";
+const dbPath = "C:/Users/nicol/Projects/qr_manager/gestor_productos_web/instance/productos_por_clubes.db";
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error("Error al conectar con la base de datos:", err.message);

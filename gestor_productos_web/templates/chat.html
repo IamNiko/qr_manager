@@ -1,0 +1,66 @@
+{% extends 'base.html' %} {% block title %}Chat{% endblock %} {% block content
+%}
+<div class="card bg-dark text-light">
+  <div class="card-header">
+    <h5>Chat de Soporte</h5>
+  </div>
+  <div class="card-body">
+    <div
+      id="chat-box"
+      class="p-3 border rounded"
+      style="
+        height: 400px;
+        overflow-y: auto;
+        background-color: var(--dark-secondary);
+      "
+    >
+      <!-- Mensajes del chat se añadirán aquí -->
+    </div>
+    <div class="mt-3 d-flex">
+      <input
+        type="text"
+        id="chat-input"
+        class="form-control me-2"
+        placeholder="Escribe tu mensaje aquí"
+      />
+      <button id="send-btn" class="btn btn-primary">Enviar</button>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const chatBox = document.getElementById("chat-box");
+    const chatInput = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    sendBtn.addEventListener("click", async () => {
+      const mensaje = chatInput.value.trim();
+      if (mensaje) {
+        // Mostrar mensaje del usuario
+        chatBox.innerHTML += `<div class="text-end"><span class="badge bg-primary">${mensaje}</span></div>`;
+        chatInput.value = "";
+
+        // Enviar mensaje al servidor
+        try {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mensaje: mensaje }),
+          });
+          const data = await response.json();
+
+          // Mostrar respuesta del bot
+          chatBox.innerHTML += `<div class="text-start"><span class="badge bg-secondary">${data.respuesta}</span></div>`;
+        } catch (error) {
+          console.error("Error:", error);
+          chatBox.innerHTML += `<div class="text-start"><span class="badge bg-danger">Error al conectar con el servidor.</span></div>`;
+        }
+
+        // Scroll al final
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+  });
+</script>
+{% endblock %}
